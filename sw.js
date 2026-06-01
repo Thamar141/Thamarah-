@@ -48,3 +48,46 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
+
+/* =======================================================
+   ⚙️ نظام التذكير التلقائي الذكي والخلفي (حتى والتطبيق مقفل)
+   ======================================================= */
+
+// تشغيل فحص دوري بالتعاون مع نظام أندرويد في الخلفية
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'daily-habit-check') {
+    event.waitUntil(checkHabitsFromBackground());
+  }
+});
+
+// استقبال طلبات الفحص من النظام أو التنبيهات المجدولة
+async function checkHabitsFromBackground() {
+  const currentHour = new Date().getHours();
+  
+  // مواعيد التذكير الـ 3 الثابتة (الساعة 12 ظهراً، 5 مغرباً، 9 مساءً)
+  const notificationTimes = [12, 17, 21]; 
+
+  if (notificationTimes.includes(currentHour)) {
+    // إرسال إشعار التذكير اللطيف للمستخدم وهو خارج البرنامج
+    self.registration.showNotification("تذكير ثَمَرَة 🌱", {
+      body: "يا بطل، ميعاد مراجعة ثمارك الإيمانية جه.. لا تنسى قطفها اليوم!",
+      icon: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/png/solid/seedling.png",
+      vibrate: [200, 100, 200],
+      badge: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/png/solid/seedling.png",
+      tag: "thamarat-remind-tag" // عشان الإشعارات المكررة متتراكمش فوق بعضها وتزعج المستخدم
+    });
+  }
+}
+
+// فتح التطبيق فوراً عند ضغط المستخدم على الإشعار
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close(); // قفل الإشعار
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      if (clientList.length > 0) {
+        return clientList[0].focus(); // لو التطبيق مفتوح في الخلفية يفتحه في وشه
+      }
+      return clients.openWindow('./'); // لو مقفول تماماً يشغله من جديد
+    })
+  );
+});

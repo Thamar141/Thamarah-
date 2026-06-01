@@ -291,6 +291,9 @@ function submitDailySuccess(scoreValue) {
     localStorage.setItem('thamarat_v8_state', JSON.stringify(appState));
     checkMilestonesAndUnlocks(activeChallengeId, completedDay, scoreValue);
     renderMap();
+
+    // التعديل: فحص فوري عند الحفظ لإرسال إشعار مباركة إذا تم إنهاء كل شيء
+    checkHabitStatus(true);
 }
 
 function checkMilestonesAndUnlocks(id, completedDay, scoreValue = 5) {
@@ -310,7 +313,7 @@ function checkMilestonesAndUnlocks(id, completedDay, scoreValue = 5) {
             triggerModal("المرحلة المتقدمة! 👑", "أنت تقترب من القمة! 18 يوماً من الالتزام الباهر وتجاوز تحدي الـ 500 صلاة اليوم بنجاح خطوة بخطوة!", "👑");
         } else if (completedDay === 21) {
             prog.isOpenHabit = true; 
-            triggerModal("احتفالية كبرى الختام! 🎉", "مبارك لك إتمام 21 يوماً كاملة بنجاح ساحق! أصبحت العادة متأصلة فيك وثبتت in قلبك، تم تفعيل وضع (الالتزام المفتوح) لثمرة 1 لتستخدم العداد في أي وقت دون قيود يومية!", "🏆");
+            triggerModal("احتفالية كبرى الختام! 🎉", "مبارك لك إتمام 21 يوماً كاملة بنجاح ساحق! أصبحت العادة متأصلة فيك وثبتت في قلبك، تم تفعيل وضع (الالتزام المفتوح) لثمرة 1 لتستخدم العداد في أي وقت دون قيود يومية!", "🏆");
         } else {
             triggerModal("ثمرة مباركة! ❤️", `تم تسجيل اليوم ${completedDay} بنجاح.\nالهدف القادم بانتظارك غداً بكل بركة ونور وهدوء نفسي!`, "🎉");
         }
@@ -395,7 +398,6 @@ function toggleInfoModal(show) {
     }
 }
 
-// دالة تفعيل نظام الإشعارات الرسمية للموبايل والكمبيوتر
 function initNotificationSystem() {
     if (!("Notification" in window)) {
         triggerModal("تنبيه النظام", "متصفحك الحالي لا يدعم التنبيهات، ولكننا سنذكرك دائماً عند فتح البرنامج!", "⚠️");
@@ -426,7 +428,6 @@ function checkNotificationVisuals() {
     }
 }
 
-// دالة إرسال الإشعار التجريبي مجبرة عبر الـ Service Worker للموبايل
 function sendTestNotification() {
     const title = "تطبيق ثَمَرَة 🌱";
     const options = {
@@ -446,7 +447,6 @@ function sendTestNotification() {
     }
 }
 
-// تم تعديل الدالة بالكامل لتجبر الأندرويد على إظهار الإشعار عبر الـ Service Worker
 function sendNotification(title, body) {
     if (Notification.permission === "granted") {
         const options = {
@@ -467,8 +467,8 @@ function sendNotification(title, body) {
     }
 }
 
-// دالة فحص المهمة وإرسال التذكير
-function checkHabitStatus() {
+// دالة فحص المهمة وإرسال التذكير أو المباركة الفورية
+function checkHabitStatus(isManualClick = false) {
     const todayStr = getTodayDateString();
     let allDone = true;
 
@@ -487,9 +487,22 @@ function checkHabitStatus() {
     }
 
     if (allDone) {
-        sendNotification("بطل ثَمَرَة! 🌟", "أحسنت يا زين، كل ثمار اليوم تم قطفها بنجاح!");
+        const lastWinNotify = localStorage.getItem('last_win_notify_date');
+        if (lastWinNotify !== todayStr) {
+            sendNotification("بطل ثَمَرَة! 🌟", "أحسنت، كل ثمار اليوم تم قطفها بنجاح! زادك الله نوراً.");
+            localStorage.setItem('last_win_notify_date', todayStr);
+        }
     } else {
-        sendNotification("تذكير ثَمَرَة 🌱", "يا بطل، لسه فيه ثمار إيمانية مخلصتش النهاردة.. مستني إيه؟");
+        if (!isManualClick) { 
+            const currentHour = new Date().getHours();
+            const notificationTimes = [12, 17, 21]; // الظهر والمغرب وبالليل
+            const lastRemindHour = parseInt(localStorage.getItem('last_remind_hour')) || -1;
+
+            if (notificationTimes.includes(currentHour) && lastRemindHour !== currentHour) {
+                sendNotification("تذكير ثَمَرَة 🌱", "يا بطل، لسه فيه ثمار إيمانية مخلصتش النهاردة.. مستني إيه؟");
+                localStorage.setItem('last_remind_hour', currentHour);
+            }
+        }
     }
 }
 
@@ -498,5 +511,5 @@ if ("Notification" in window && Notification.permission === "default") {
     Notification.requestPermission();
 }
 
-// تشغيل الفحص التجريبي بعد 5 ثوانٍ من فتح التطبيق للتأكد 100%
-setTimeout(checkHabitStatus, 5000);
+// فحص ذكي هادئ بعد 10 ثوانٍ من دخول التطبيق
+setTimeout(() => { checkHabitStatus(false); }, 10000);
