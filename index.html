@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق ثَمَرَة 🌱</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#050b14">
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-title">ثَمَرَة 🌱</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="streak-badge">
+                <i class="fas fa-fire"></i>
+                <span>الالتزام العام: <strong id="global-streak">0</strong> يوم</span>
+            </div>
+            <button id="info-toggle-btn" class="info-btn" onclick="toggleInfoModal(true)">
+                <i class="fas fa-info-circle"></i>
+            </button>
+            <button id="noti-toggle-btn" class="noti-btn" onclick="initNotificationSystem()">
+                <i class="fas fa-bell"></i>
+            </button>
+        </div>
+    </header>
+
+    <section id="splash-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="neon-text-gold">ثَمَرَة</div>
+            <h3>أهلاً بك في طريق النور</h3>
+            <p>هنا هتقدر تبني عاداتك وتلتزم بعباداتك بأسلوب ممتع وسهل.. خطوة بخطوة يومك هيبقى مليان بركة</p>
+            <button class="enter-btn" onclick="enterApp()">دخول لرحلة ثمارك 🚀</button>
+        </div>
+    </section>
+
+    <section id="main-map" class="screen">
+        <div class="map-scroll-area">
+            <div class="map-container" id="map-container">
+                <div class="map-line"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="challenge-screen" class="screen">
+        <button class="back-btn" onclick="showScreen('main-map')">
+            <i class="fas fa-arrow-right"></i> العودة للخريطة
+        </button>
+        
+        <div class="challenge-card">
+            <h2 id="challenge-title" class="neon-text-green">اسم الثمرة</h2>
+            <div id="challenge-motivation" class="motivation-box">العبارة التحفيزية...</div>
+            
+            <div class="day-status">
+                <span>اليوم الحالي للعادة: </span>
+                <strong id="challenge-day-num">0</strong>
+            </div>
+
+            <div id="interactive-area" style="width: 100%; display: flex; justify-content: center; align-items: center;"></div>
+
+            <button id="action-submit-btn" class="main-action-btn" style="display: none;"></button>
+        </div>
+    </section>
+
+    <div id="custom-alert" class="modal">
+        <div class="modal-content">
+            <div id="alert-icon">🎉</div>
+            <h3 id="alert-title">عنوان الرسالة</h3>
+            <p id="alert-message">مضمون الرسالة التشجيعية...</p>
+            <button class="close-alert-btn" onclick="handleAlertClose()">الحمد لله، ومستمرون 💚</button>
+        </div>
+    </div>
+    <div id="info-modal" class="modal">
+        <div class="modal-content info-modal-width">
+            <h3 class="info-modal-title">دليل استخدام تطبيق ثَمَرَة 🌱</h3>
+            
+            <div class="info-scroll-container">
+                
+                <div class="info-section">
+                    <h4>💡 فكرة التطبيق الأساسية</h4>
+                    <p>تطبيق ثَمَرَة مصمم ليربط التزامك بالعبادات اليومية برحلة بصرية تصاعدية ممتعة. بدلاً من التتبع التقليدي الممل، كل عادة تحافظ عليها هنا هي بمثابة "ثمرة حقيقية" تزرعها وتجني أثرها ونورها في حياتك يوماً بعد يوم.</p>
+                </div>
+
+                <div class="info-section">
+                    <h4>🌱 نظام الثمرات وفك المستويات</h4>
+                    <p>الخريطة تعتمد على بناء تصاعدي منظم للعبادات لضمان عدم التشتت:</p>
+                    <ul>
+                        <li><strong>الثمار المغلقة 🔒:</strong> تظهر بقفل رمادي، ولا يمكن فتحها إلا بعد إتمام شرط الثبات في الثمرة السابقة لها مباشرة.</li>
+                        <li><strong>فك الأقفال والتطور:</strong> عند الالتزام بـ 10 أيام كاملة في ثمرة معينة (مثل صلاة النبي)، يقوم النظام تلقائياً بفك القفل عن الثمرة التالية على الخريطة لتضيف عبادة جديدة لبيتك وحياتك.</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>🎮 كيف تتعامل مع البرنامج؟</h4>
+                    <ul>
+                        <li><strong>دخول التحدي:</strong> اضغط على أي ثمرة مفتوحة ملونة على الخريطة لتفتح لك واجهة العداد أو المهام الخاصة بها.</li>
+                        <li><strong>التفاعل والعد:</strong> اضغط على حبة السبحة الرقمية لتسجيل تحدي اليوم.</li>
+                        <li><strong>قطف الثمرة 🎯:</strong> عند وصولك للرقم المطلوب لليوم، يظهر لك زر الحفظ. بمجرد الضغط عليه، يتحول لون الثمرة على الخريطة للون الأخضر (تم اليوم) ويحفظ تقدمك فوراً في ذاكرة الموبايل حتى لو أغلقته.</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>👑 وضع الالتزام المفتوح</h4>
+                    <p>الهدف النهائي لكل ثمرة هو الاستمرار المتتالي حتى تصل إلى 21 يوماً. هنا تتحول الثمرة على الخريطة إلى اللون الذهبي المشع ويفتح لك النظام (وضع الالتزام المفتوح)؛ لتتمكن من استخدام العداد والسبحة بمرونة حرة في أي وقت كأسلوب حياة مستدام بدون شروط يومية.</p>
+                </div>
+
+            </div>
+
+            <button class="close-info-btn" onclick="toggleInfoModal(false)">فهمت الفكرة، لنبدأ الرحلة 🚀</button>
+        </div>
+    </div>
+<script src="script.js"></script>
+<script>
+    // كود تسجيل الـ Service Worker إجبارياً عند فتح التطبيق
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('تم تسجيل السيرفس وركر بنجاح يا زين! ✨', reg))
+            .catch(err => console.log('فيه مشكلة في التسجيل:', err));
+        });
+    }
+</script>
+    <div class="social-contact-bar">
+        <a href="https://www.tiktok.com/@ahmedab8809" target="_blank" class="social-link tiktok">TikTok</a>
+        <a href="https://www.instagram.com/ahmed__143000" target="_blank" class="social-link instagram">Instagram</a>
+        <a href="https://www.facebook.com/أحمد1430" target="_blank" class="social-link facebook">Facebook</a>
+    </div>
+</body>
+</html>
