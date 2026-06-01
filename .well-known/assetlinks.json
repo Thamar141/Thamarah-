@@ -1,0 +1,8 @@
+"relation": ["delegate_permission/common .handle_all_urls"l, 
+"target":{ 
+"namespace": "android_app", 
+"package_name": "io.github.thamar141.t 
+wa", 
+"sha256_cert_fingerprints": ["AB:68:8C:7 7:OD:25:81:9E:1F:CD:1B:7D: D3:07:DB:47:FO:B B:2A:75:06:6F:26:2D:81:14:AC:04:E3:B5:62:C5 
+"] 
+] 
