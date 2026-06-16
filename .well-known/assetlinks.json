@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.web.thamar_6ab6c.twa",
+      "sha256_cert_fingerprints": ["2A:40:88:E0:9F:6C:9F:72:BA:B5:C9:7C:45:2C:6E:61:7E:A6:CB:53:C0:C8:17:C8:B1:17:9B:55:5D:D0:7F:B9"]
+    }
+  }
+]
